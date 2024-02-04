@@ -2,7 +2,7 @@
 #include <cstdlib>
 
 int main() {
-    Game myGame;
+    game myGame;
     myGame.run();
     return EXIT_SUCCESS;
 }

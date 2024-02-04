@@ -1,31 +1,39 @@
 // Ball.cpp
 #include "../../include/Ball.hpp"
-#include "SFML/Graphics/Color.hpp"
 #include "SFML/System/Vector2.hpp"
 
-Ball::Ball(const sf::Vector2f pos, const sf::Vector2f vel, const float rad,
-           const sf::Color col)
-    : position(pos), velocity(vel), radius(rad), color(col) {
-
-  shape.setOrigin({radius, radius});
-  shape.setPosition(position);
-  shape.setRadius(radius);
-  shape.setFillColor(color);
+ball::ball() {
+    shape_.setOrigin({radius_, radius_});
+    shape_.setPosition(position_);
+    shape_.setRadius(radius_);
+    shape_.setFillColor(color_);
 }
 
-sf::Vector2f Ball::getPosition() const { return position; }
-sf::Vector2f Ball::getVelocity() const { return velocity; }
+sf::Vector2f ball::get_position() const { return position_; }
+sf::Vector2f ball::get_velocity() const { return velocity_; }
 
-void Ball::update(const float dt) {
-  position += velocity * dt;
-  shape.setPosition(position);
+void ball::update(const float dt) {
+    position_ += velocity_ * dt;
+    shape_.setPosition(position_);
 }
 
-void Ball::draw(sf::RenderWindow *win) { win->draw(shape); }
+void ball::draw(sf::RenderWindow *win) const { win->draw(shape_); }
 
-void Ball::setPosition(sf::Vector2f pos) {
-  position = pos;
-  shape.setPosition(pos);
+void ball::set_position(const sf::Vector2f pos) {
+    position_ = pos;
+    shape_.setPosition(pos);
 }
 
-void Ball::setVelocity(sf::Vector2f vel) { velocity = vel; }
+void ball::set_velocity(const sf::Vector2f vel) { velocity_ = vel; }
+
+float ball::get_radius() const { return radius_; }
+void ball::set_radius(const float rad) { radius_ = rad; }
+
+float ball::get_left_side() const { return get_position().x - get_radius(); }
+
+float ball::get_right_side() const { return get_position().x + get_radius(); }
+
+float ball::get_up_side() const { return get_position().y - get_radius(); }
+
+float ball::get_down_side() const { return get_position().y + get_radius(); }
+
