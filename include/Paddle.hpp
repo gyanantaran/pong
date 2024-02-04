@@ -1,42 +1,47 @@
-// Ball.hpp
+// Paddle.hpp
 #pragma once
 
-#include "SFML/Graphics/Color.hpp"
+#include "GameObject.hpp"
 #include "SFML/Graphics/RectangleShape.hpp"
-#include "SFML/Graphics/RenderWindow.hpp"
-#include "SFML/System/Vector2.hpp"
 
-// Forward declaration of Game class
-class Game;
-
-// sf::Vector2f PADDLE_SIZE = {20, 50};
-// sf::Vector2f PADDLE_POSITION = {0, 0};
-// sf::Vector2f PADDLE_VELOCITY = {0, 0};
-
-class Paddle {
+class paddle final : public game_object {
 public:
-  // Declare Game as a friend class
-  friend class Game;
+    paddle();
 
-  Paddle(sf::Vector2f pos = {0, 0}, sf::Vector2f vel = {0, 0},
-         sf::Vector2f siz = {20, 150}, sf::Color col = sf::Color::Black);
+    // getters and setters
+    sf::Vector2f get_position() const override;
 
-  sf::Vector2f getPosition() const;
-  sf::Vector2f getVelocity() const;
+    sf::Vector2f get_velocity() const override;
+
+    void set_position(sf::Vector2f pos) override;
+
+    void set_velocity(sf::Vector2f vel) override;
+
+    sf::Vector2f get_size() const;
+
+    void set_size(sf::Vector2f siz);
+
+    float get_speed() const;
+
+    void set_speed(float spee);
+
+    float get_left_side() const;
+    float get_down_side() const;
+    float get_up_side() const;
+    float get_right_side() const;
+
+    // update and draw
+    void update(float dt) override;
+
+    void draw(sf::RenderWindow *win) const override;
 
 private:
-  sf::Color color;
-  sf::Vector2f position;
-  sf::Vector2f velocity;
+    sf::Vector2f position_ = {0, 0};
+    sf::Vector2f velocity_ = {0, 0};
+    sf::Color color_ = sf::Color::Black;
 
-  sf::RectangleShape shape;
-  sf::Vector2f size;
+    sf::RectangleShape shape_;
+    sf::Vector2f size_ = {20, 150};
 
-  float key_speed = 10;
-
-  void setPosition(sf::Vector2f pos);
-  void setVelocity(sf::Vector2f vel);
-
-  void update(float dt);
-  void draw(sf::RenderWindow *win);
+    float speed_ = 100;
 };

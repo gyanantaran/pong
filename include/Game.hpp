@@ -8,28 +8,31 @@
 #include "SFML/System/String.hpp"
 #include "SFML/Window/VideoMode.hpp"
 
-class Game {
+class game {
 public:
-  Game();
+  game();
 
   void run();
 
 private:
-  void handleEvents();
-  void update(float deltaTime);
-  void handleCollisions();
+  void handle_events();
+
+  void update(float delta_time);
+
+  void handle_collisions();
+
   void draw();
 
 private:
-  sf::VideoMode window_mode;
-  sf::String window_title;
-  sf::RenderWindow window;
-  sf::Vector2f window_size = {800, 500};
-  sf::Color window_background_color;
+  sf::VideoMode window_mode_;
+  sf::String window_title_;
+  sf::RenderWindow window_;
+  sf::Vector2f window_size_ = {800, 500};
+  sf::Color window_background_color_;
 
-  Ball ball;
-  Paddle left_paddle;
-  Paddle right_paddle;
+  ball ball_;
+  paddle left_paddle_;
+  paddle right_paddle_;
 
-  sf::Clock game_clock;
+  sf::Clock game_clock_;
 };

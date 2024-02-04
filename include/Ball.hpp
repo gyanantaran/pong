@@ -1,41 +1,41 @@
 // Ball.hpp
 #pragma once
 
+#include "GameObject.hpp"
 #include "SFML/Graphics/CircleShape.hpp"
-#include "SFML/Graphics/Color.hpp"
-#include "SFML/Graphics/RenderWindow.hpp"
-#include "SFML/System/Vector2.hpp"
 
-// Forward declaration of Game class
-class Game;
-
-// float BALL_RADIUS = 30;
-// sf::Vector2f BALL_POSITION = {0, 0};
-// sf::Vector2f BALL_VELOCITY = {0, 0};
-
-class Ball {
+class ball final : public game_object {
 public:
-  // Declare Game as a friend class
-  friend class Game;
+    explicit ball();
 
-  Ball(sf::Vector2f pos = {0, 0}, sf::Vector2f vel = {0, 0}, float rad = 30,
-       sf::Color col = sf::Color::Black);
+    // getters and setters
+    sf::Vector2f get_position() const override;
 
-  sf::Vector2f getPosition() const;
-  sf::Vector2f getVelocity() const;
+    sf::Vector2f get_velocity() const override;
+
+    float get_radius() const;
+
+    void set_position(sf::Vector2f pos) override;
+
+    void set_velocity(sf::Vector2f vel) override;
+
+    void set_radius(float rad);
+
+    float get_left_side() const;
+    float get_down_side() const;
+    float get_up_side() const;
+    float get_right_side() const;
+
+    // update and draw
+    void update(float dt) override;
+
+    void draw(sf::RenderWindow *win) const override;
 
 private:
-  sf::Vector2f position;
-  sf::Vector2f velocity;
+    sf::Vector2f position_ = {0, 0};
+    sf::Vector2f velocity_ = {0, 0};
+    sf::Color color_ = sf::Color::Black;
 
-  sf::CircleShape shape;
-
-  float radius;
-  sf::Color color;
-
-  void setPosition(sf::Vector2f pos);
-  void setVelocity(sf::Vector2f vel);
-
-  void update(float dt);
-  void draw(sf::RenderWindow *win);
+    sf::CircleShape shape_;
+    float radius_ = 30;
 };
