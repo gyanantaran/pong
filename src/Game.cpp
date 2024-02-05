@@ -11,26 +11,18 @@ This class is responsible for
 */
 game::game() : ball_(), left_paddle_(), right_paddle_() {
     // defaults for `GameObjects`
-    const sf::Vector2f default_ball_velocity = {-100, -100};
-    const sf::Vector2f default_left_paddle_velocity = {0, 0};
-    const sf::Vector2f default_right_paddle_velocity = {0, 0};
+    ball_.set_position(sf::Vector2f(get_window_center()));
+    ball_.set_velocity({-100, -100});
 
-    const sf::Vector2f default_ball_position = {window_size_.x / 2, window_size_.y / 2};
-    const sf::Vector2f default_left_paddle_position = {0 + left_paddle_.get_size().x, window_size_.y / 2};
-    const sf::Vector2f default_right_paddle_position = {window_size_.x - left_paddle_.get_size().x, window_size_.y / 2};
+    left_paddle_.set_position(sf::Vector2f(get_window_left_side()) + sf::Vector2f{left_paddle_.get_size().x, 0});
+    left_paddle_.set_velocity({0, 0});
 
-    ball_.set_position(default_ball_position);
-    ball_.set_velocity(default_ball_velocity);
-
-    left_paddle_.set_position(default_left_paddle_position);
-    left_paddle_.set_velocity(default_left_paddle_velocity);
-
-    right_paddle_.set_position(default_right_paddle_position);
-    right_paddle_.set_velocity(default_right_paddle_velocity);
+    right_paddle_.set_position(sf::Vector2f(get_window_right_side()) - sf::Vector2f({right_paddle_.get_size().x, 0}));
+    right_paddle_.set_velocity({0, 0});
 
 
     // setting the default `sf::RenderWindow` options
-    window_mode_ = sf::VideoMode(static_cast<unsigned int>(window_size_.x), static_cast<unsigned int>(window_size_.y));
+    window_mode_ = sf::VideoMode(window_size_.x, window_size_.y);
     window_title_ = "My window";
     window_.create(window_mode_, window_title_);
     window_background_color_ = sf::Color::White;
@@ -111,62 +103,71 @@ void game::draw() {
 // handles collisions
 void game::handle_collisions() {
     // Ball-Collision with walls
-    const float ball_down = ball_.get_position().y + ball_.get_radius(),
-                ball_up = ball_.get_position().y - ball_.get_radius();
-    const float ball_right = ball_.get_position().x + ball_.get_radius(),
-                ball_left = ball_.get_position().x - ball_.get_radius();
-
-    // beyond vertical walls
-    if (ball_.get_velocity().y > 0 && ball_down > window_size_.y) {
+    // beyond up and down walls
+    if (ball_.get_velocity().y > 0 && ball_.get_down_side() > get_window_down_side().y) {
         ball_.set_position({ball_.get_position().x, window_size_.y - ball_.get_radius()});
         ball_.set_velocity({ball_.get_velocity().x, -1 * ball_.get_velocity().y});
-    } else if (ball_.get_velocity().y < 0 && ball_up < 0) {
-        ball_.set_position({ball_.get_position().x, 0 + ball_.get_radius()});
+    } else if (ball_.get_velocity().y < 0 && ball_.get_up_side() < 0) {
+        // ball_.set_position({ball_.get_position().x, 0 + ball_.get_radius()});
         ball_.set_velocity({ball_.get_velocity().x, -1 * ball_.get_velocity().y});
     }
 
     // beyond horizontal walls
-    if (ball_.get_velocity().x > 0 && ball_right > window_size_.x) {
+    if (ball_.get_velocity().x > 0 && ball_.get_right_side() > window_size_.x) {
         ball_.set_position({window_size_.x - ball_.get_radius(), ball_.get_position().y});
         ball_.set_velocity({-1 * ball_.get_velocity().x, ball_.get_velocity().y});
-    } else if (ball_.get_velocity().x < 0 && ball_left < 0) {
+    } else if (ball_.get_velocity().x < 0 && ball_.get_left_side() < 0) {
         ball_.set_position({0 + ball_.get_radius(), ball_.get_position().y});
         ball_.set_velocity({-1 * ball_.get_velocity().x, ball_.get_velocity().y});
     }
 
-    // stopping paddles
-    // vertical collisions
+    // paddle collision with window edges
+    // up side of the left paddle with the up side of the window
     if (left_paddle_.get_up_side() < 0) {
         left_paddle_.set_position({left_paddle_.get_position().x, left_paddle_.get_size().y / 2});
         if (left_paddle_.get_velocity().y < 0)
             left_paddle_.set_velocity({left_paddle_.get_velocity().x, 0});
-    } else if (left_paddle_.get_down_side() > window_size_.y) {
+    }
+
+    // down side of the left paddle with the down side of the window
+    if (left_paddle_.get_down_side() > window_size_.y) {
         left_paddle_.set_position({left_paddle_.get_position().x, window_size_.y - left_paddle_.get_size().y / 2});
         if (left_paddle_.get_velocity().y > 0)
             left_paddle_.set_velocity({left_paddle_.get_velocity().x, 0});
     }
 
+    // up side of the right paddle with the up side of the window
     if (right_paddle_.get_up_side() < 0) {
         right_paddle_.set_position({right_paddle_.get_position().x, right_paddle_.get_size().y / 2});
         if (right_paddle_.get_velocity().y < 0)
             right_paddle_.set_velocity({right_paddle_.get_velocity().x, 0});
     }
+
+    // down side of the right paddle with the down side of the window
     if (right_paddle_.get_down_side() > window_size_.y) {
         right_paddle_.set_position({right_paddle_.get_position().x, window_size_.y - right_paddle_.get_size().y / 2});
         if (right_paddle_.get_velocity().y > 0)
             right_paddle_.set_velocity({right_paddle_.get_velocity().x, 0});
     }
 
-    // collisions between ball and paddles
+    // left side of the ball with the right side of the left paddle
     if ((ball_.get_left_side() < left_paddle_.get_right_side()) &&
         ((ball_.get_down_side() > left_paddle_.get_up_side()) &&
          (ball_.get_up_side() < left_paddle_.get_down_side()))) {
         ball_.set_velocity({-1 * ball_.get_velocity().x, ball_.get_velocity().y});
     }
 
+    // right side of the ball with the left side of the right paddle
     if ((ball_.get_right_side() > right_paddle_.get_left_side()) &&
         ((ball_.get_down_side() > right_paddle_.get_up_side()) &&
          (ball_.get_up_side() < right_paddle_.get_down_side()))) {
         ball_.set_velocity({-1 * ball_.get_velocity().x, ball_.get_velocity().y});
     }
 }
+
+sf::Vector2u game::get_window_center() const { return {window_size_.x / 2, window_size_.y / 2}; }
+
+sf::Vector2u game::get_window_left_side() const { return {0, window_size_.y / 2}; }
+sf::Vector2u game::get_window_right_side() const { return {window_size_.x, window_size_.y / 2}; }
+sf::Vector2u game::get_window_down_side() const { return {window_size_.x / 2, window_size_.y}; }
+sf::Vector2u game::get_window_up_side() const { return {window_size_.x / 2, 0}; }
